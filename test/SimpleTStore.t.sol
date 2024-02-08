@@ -4,20 +4,17 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 
 import "src/SimpleTStore.sol";
+import "forge-std/console.sol";
 
-contract TestSimpleTStore is Test {
-    SimpleTStore c;
-
-    function setUp() public {
-        c = new SimpleTStore();
-    }
-
-    function testEmptyRead() public {
-        assertEq(c.tload(0), 0);
-    }
-
+contract TestSimpleTStore is Test, SimpleTStore {
     function testStore() public {
-        c.tstore(0, 1);
-        assertEq(c.tload(0), 1);
+        address token = address(0x123);
+        uint debt = 100;
+        uint tokenKey = uint(keccak256(abi.encodePacked(token)));
+        uint gasBefore = gasleft();
+        tstore(tokenKey, debt);
+        uint gasAfter = gasleft();
+        console.log("gas used", gasBefore - gasAfter);
+        console.log("tload", tload(tokenKey));
     }
 }
